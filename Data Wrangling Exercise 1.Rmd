@@ -26,3 +26,65 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+---
+
+#Imported refine_original.csv in RStudio and view to check
+View(refine_original_csv)
+
+#Converting data into data frame called "refine"
+refine <- read.csv("refine_original.csv.csv")
+
+#Quick checks for converting to data frame
+refine
+str(refine)
+
+#Load necessary packages: dplyr,stringr,tidyr
+install.packages("dplyr")
+install.packages("stringr")
+install.packages("tidyr")
+
+#Task 1
+refine$company <- tolower(refine$company)
+refine$company <- str_replace(refine$company, "phillips","philips")
+refine$company <- str_replace(refine$company, "phllips","philips")
+refine$company <- str_replace(refine$company, "phillps","philips")
+refine$company <- str_replace(refine$company, "fillips","philips")
+refine$company <- str_replace(refine$company, "phlips","philips")
+refine$company <- str_replace(refine$company, "akz0","akzo")
+refine$company <- str_replace(refine$company, "ak zo","akzo")
+refine$company <- str_replace(refine$company, "unilver","unilever")
+refine
+
+#Task 2
+refine$`Product code / number`<- separate(refine,`Product code / number`,c("product.code", "number",sep="-"))
+refine2 <- refine$`Product code / number`
+
+#Task 3
+refine2$product.category <- str_replace(refine2$product.code, "p","Smartphone")
+refine2$product.category2 <- str_replace(refine2$product.category, "v","TV")
+refine2$product.category3 <- str_replace(refine2$product.category2, "x","Laptop")
+refine2$product.category4 <- str_replace(refine2$product.category3, "q","Tablet")
+refine2$product.category <- refine2$product.category4
+refine2$product.category2 <- NULL
+refine2$product.category3 <- NULL
+refine2$product.category4 <- NULL
+
+#Task 4
+refine2$full.address <- unite(refine2, full.address,c(address,city,country),sep=",")
+refine3 <- refine2$full.address
+
+#Task 5
+refine3$number <- as.numeric(refine3$number)
+summary(refine3)
+refine3$company_philips <- factor(with(refine3$company_philips,ifelse((refine3$company=="philips"),1,0)))
+refine3$company_akzo <- factor(with(refine3$company_akzo,ifelse((refine3$company=="akzo"),1,0)))
+refine3$company_van_houten <- factor(with(refine3$company_van_houten,ifelse((refine3$company=="van_houten"),1,0)))
+refine3$company_unilever <- factor(with(refine3$company_unilever,ifelse((refine3$company=="unilever"),1,0)))
+refine3$product_smartphone <- factor(with(refine3$product_smartphone,ifelse((refine3$product.code=="p"),1,0)))
+refine3$product_tv <- factor(with(refine3$product_tv,ifelse((refine3$product.code=="v"),1,0)))
+refine3$product_laptop <- factor(with(refine3$product_laptop,ifelse((refine3$product.code=="q"),1,0)))
+refine3$product_tablet <- factor(with(refine3$tablet,ifelse((refine3$product.code=="x"),1,0)))
+
+# Task 6
+write.csv(refine3,file="refine_clean.csv")
