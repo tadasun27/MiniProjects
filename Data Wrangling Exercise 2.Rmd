@@ -1,0 +1,47 @@
+---
+title: "Data Wranging Exercise 2"
+author: "Tadaaki Sun"
+date: "December 24, 2016"
+output: html_document
+---
+
+## Load the data in RStudio
+
+Imported refine_original.csv in RStudio and view to check
+```{r}
+View(titanic_original)
+```
+
+Converting data into data frame called "refine"
+```{r}
+titanic <- read.csv("titanic_original.csv")
+```
+
+## Port of embarkation
+```{r}
+titanic$embarked <- sub("^$", "S", titanic$embarked)
+```
+
+## Age
+```{r}
+summary(titanic$age)
+titanic$age[is.na(titanic$age)] <- 29.88
+```
+
+Could have used the median number instead, rather than having an age with decimals. 
+
+## Lifeboat
+```{r}
+titanic$boat <- sub("^$", "NA", titanic$boat)
+```
+
+## Cabin
+```{r}
+titanic$has_cabin_number <- factor(with(titanic$has_cabin_number,ifelse((titanic$cabin==""),0,1)))
+```
+
+## Submit the project
+```{r}
+write.csv(titanic,file="titanic_clean.csv",row.names=FALSE)
+```
+
